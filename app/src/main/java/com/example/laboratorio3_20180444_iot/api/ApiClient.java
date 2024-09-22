@@ -9,7 +9,7 @@ public class ApiClient {
     public static Retrofit getClient() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl("https://dummyjson.com/auth/login") // Reemplaza con la URL de tu API
+                    .baseUrl("https://dummyjson.com/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

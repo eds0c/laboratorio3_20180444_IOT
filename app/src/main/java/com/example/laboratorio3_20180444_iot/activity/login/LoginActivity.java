@@ -1,5 +1,6 @@
 package com.example.laboratorio3_20180444_iot.activity.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.laboratorio3_20180444_iot.R;
+import com.example.laboratorio3_20180444_iot.activity.timer.TimerActivity;
 import com.example.laboratorio3_20180444_iot.api.ApiClient;
 import com.example.laboratorio3_20180444_iot.api.ApiService;
 import com.example.laboratorio3_20180444_iot.models.LoginRequest;
@@ -32,21 +34,18 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.password);
         loginbutton = findViewById(R.id.login_button);
 
-        loginbutton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                String user = username.getText().toString();
-                String pass = password.getText().toString();
+        loginbutton.setOnClickListener(v -> {
+            String user = username.getText().toString();
+            String pass = password.getText().toString();
 
-                // Validación básica: comprobar si los campos están vacíos
-                if (user.isEmpty() || pass.isEmpty()) {
-                    // Mostrar un mensaje de error si algún campo está vacío
-                    Toast.makeText(LoginActivity.this, "Por favor, llena ambos campos", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Aquí puedes agregar la llamada a la API para verificar las credenciales
-                    login(user, pass);
+            // Validación básica: comprobar si los campos están vacíos
+            if (user.isEmpty() || pass.isEmpty()) {
+                // mostrar un mensaje de error si algún campo está vacío
+                Toast.makeText(LoginActivity.this, "Por favor, llena ambos campos", Toast.LENGTH_SHORT).show();
+            } else {
+                // llamamos a la API para el logueo
+                login(user, pass);
 
-                }
             }
         });
     }
@@ -62,10 +61,23 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     LoginResponse loginResponse = response.body();
                     if (loginResponse != null) {
-                        // Si el inicio de sesión fue exitoso, guarda el token y procede
+                        //si el inicio de sesión fue exitoso, guarda el token y procede
                         String token = loginResponse.getToken();
+                        String userName = loginResponse.getFirstName();
+                        String userLastName = loginResponse.getLastName();
+                        String userEmail = loginResponse.getEmail();
+                        String userGender = loginResponse.getGender();
+                        int userId = loginResponse.getId();
                         Toast.makeText(LoginActivity.this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
-                        // Aquí puedes redirigir a otra actividad
+
+                        Intent intent = new Intent(LoginActivity.this, TimerActivity.class);
+                        intent.putExtra("token", token);
+                        intent.putExtra("userName", userName);
+                        intent.putExtra("userLastName", userLastName);
+                        intent.putExtra("userEmail", userEmail);
+                        intent.putExtra("gender", userGender);
+                        intent.putExtra("id", userId);
+                        startActivity(intent);
                     } else {
                         Toast.makeText(LoginActivity.this, "Error en la respuesta de la API", Toast.LENGTH_SHORT).show();
                     }
